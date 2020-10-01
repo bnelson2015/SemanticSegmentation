@@ -1,2 +1,8 @@
 
 fourier_synthesis.m
+data/rit18_data/rit18_data.mat
+gpucoderSetupReport.html
+rit18_data/rit18_data.mat
+train_data.mat
+train_labels.png
+trainedUnet/multispectralUnet.mat
