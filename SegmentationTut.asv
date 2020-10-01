@@ -20,12 +20,10 @@ classNames = [ "RoadMarkings","Tree","Building","Vehicle","Person", ...
                "Water_Lake","Water_Pond","Asphalt"]; 
 
 
-% Create a colormap for the label data, and overlay class labels on input
-% image to show the desired segmentation
+           
 cmap = jet(numel(classNames));
 B = labeloverlay(histeq(train_data(:,:,4:6)),train_labels,'Transparency',0.8,'Colormap',cmap);
 
-% Display image with hand labeled regions
 figure
 title('Training Labels')
 imshow(B)
@@ -34,31 +32,27 @@ ticks = 1/(N*2):1/N:1;
 colorbar('TickLabels',cellstr(classNames),'Ticks',ticks,'TickLength',0,'TickLabelInterpreter','none');
 colormap(cmap)
 
-% Save training data to a .mat file, save the training labels as a png.
 save('train_data.mat','train_data');
 imwrite(train_labels,'train_labels.png');
 
-% Create an Image Datastore from training data
+% Create an Image Datastore
 imds = imageDatastore('train_data.mat','FileExtensions','.mat','ReadFcn',@matReader);
 
-% Create a pixel label datastore from training lables image
+% Create a pixel label Datastore
 pixelLabelIds = 1:18;
 pxds = pixelLabelDatastore('train_labels.png',classNames,pixelLabelIds);
 
 % Extract 16000, random 256x256 images patches from the training data
-% and corresponding pixel ids
+% and matching pixel ids
 dsTrain = randomPatchExtractionDatastore(imds,pxds,[256,256],'PatchesPerImage',16000);
 
-% Preview training images
 inputBatch = preview(dsTrain);
 disp(inputBatch)
 
-% Create U-Net with 256x256x6 input size
 inputTileSize = [256,256,6];
 lgraph = createUnet(inputTileSize);
 disp(lgraph.Layers)
 
-% Train the network if doTraining == true, else use a pretrained network
 doTraining = false; 
 if doTraining
     modelDateTime = datestr(now,'dd-mmm-yyyy-HH-MM-SS');
