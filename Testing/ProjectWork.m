@@ -1,7 +1,7 @@
 
 % Create a Tiff object and pull image information
-tifLink = Tiff('#34 a2-1 20x.tif', 'r');
-InfoImage = imfinfo('#34 a2-1 20x.tif');
+tifLink = Tiff('#34 a7-2 20x.tif', 'r');
+InfoImage = imfinfo('#34 a7-2 20x.tif');
 mImage = InfoImage(1).Width;
 nImage = InfoImage(1).Height;
 NumberImages = length(InfoImage);
@@ -33,7 +33,7 @@ subplot(1,3,2); imagesc(Shuffled(:,:,2));
 subplot(1,3,3); imagesc(Shuffled(:,:,3));
 
 % Create the logical array of ROIs
-ROIs = selection_logical('Selection.csv');
+ROIs = selection_logical('#34 a7-2 20x.tif ROI.csv');
 
 %padd ones if size doesn't match and error is thrown
 ROIs = padarray(ROIs',[abs(size(FullImage(:,:,str2num(x{3})),2)-size(ROIs,2)) 2],1,'post')';
@@ -49,11 +49,11 @@ pixelLabels = 0:1;
 imwrite(FullImage, 'test.png')
 imwrite(ROIs, 'training_labels.png')
 
-imds = imageDatastore('test.png', 'ReadFcn', @pngRead); 
+imds = imageDatastore('test_enhanced.png', 'ReadFcn', @pngRead); 
 
 pxds = pixelLabelDatastore('training_labels.png', classNames, pixelLabels);
 
-dsTrain = randomPatchExtractionDatastore(imds,pxds,[64,64],'PatchesPerImage',1000);
+dsTrain = randomPatchExtractionDatastore(imds,pxds,[64,64],'PatchesPerImage',100);
 
 inputBatch = preview(dsTrain);
 disp(inputBatch);
